@@ -16,3 +16,7 @@ buildNumber.properties
 .idea
 .mvn
 **/test/
+**/renren-fast/
+**/renren-generator/
+**/views/**
+.vue
