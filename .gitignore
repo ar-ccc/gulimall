@@ -21,3 +21,4 @@ buildNumber.properties
 **/views/**
 **/static/**
 **/db/**
+**/.test/

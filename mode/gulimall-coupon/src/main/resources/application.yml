@@ -1,0 +1,22 @@
+#spring:
+#  # 数据源配置
+#  datasource:
+#    username: root
+#    password: 123456
+#    url: jdbc:mysql://192.168.10.100:3306/gulimall_sms
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#  cloud:
+#    nacos:
+#      server-addr: 127.0.0.1:8848
+#      namespace: a318f5b1-a21b-401e-920d-3465c0a4652d
+#      group: dev
+#  application:
+#    name: gulimall-coupon-service
+#mybatis-plus:
+#  mapper-locations: classpath*:/mapper/**/*.xml
+#  global-config:
+#    db-config:
+#      id-type: auto
+#
+#server:
+#  port: 7000

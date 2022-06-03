@@ -1,0 +1,19 @@
+server:
+  port: 9527
+spring:
+  cloud:
+    nacos:
+      server-addr: 127.0.0.1:8848
+    gateway:
+      routes:
+        - id: baidu-route
+          uri: http://www.baidu.com
+          predicates:
+            - Path=/s
+
+        - id: qq-route
+          uri: http://www.qq.com
+          predicates:
+            - Path=/qq
+  application:
+    name: gulimall-gateway

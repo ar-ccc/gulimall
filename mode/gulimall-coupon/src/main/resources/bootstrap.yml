@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: gulimall-coupon-service
+  cloud:
+    nacos:
+      config:
+        server-addr: 127.0.0.1:8848
+        namespace: a318f5b1-a21b-401e-920d-3465c0a4652d
+        group: dev
+        shared-configs[0].data-id: datasource.yaml
+        shared-configs[0].group: dev
+        shared-configs[0].refresh-interval: 5000
+
+        shared-configs[1].data-id: mybatis.yaml
+        shared-configs[1].group: dev
+        shared-configs[1].refresh-interval: 5000
+
+        shared-configs[2].data-id: other.yaml
+        shared-configs[2].group: dev
+        shared-configs[2].refresh-interval: 5000
