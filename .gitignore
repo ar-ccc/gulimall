@@ -16,7 +16,8 @@ buildNumber.properties
 .idea
 .mvn
 **/test/
-**/renren-fast/
 **/renren-generator/
+**/renren-fast/
 **/views/**
-*.java
+**/static/**
+**/db/**
