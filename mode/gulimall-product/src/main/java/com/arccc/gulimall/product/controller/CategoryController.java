@@ -1,15 +1,12 @@
 package com.arccc.gulimall.product.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.arccc.gulimall.product.entity.CategoryEntity;
 import com.arccc.gulimall.product.service.CategoryService;
@@ -32,14 +29,15 @@ public class CategoryController {
     private CategoryService categoryService;
 
     /**
-     * 列表
+     * 查询所有分类和子分类，以树形结构组装起来
      */
-    @RequestMapping("/list")
+    @RequestMapping("/list/tree")
     //@RequiresPermissions("product:category:list")
-    public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = categoryService.queryPage(params);
+    public R list(){
+        List<CategoryEntity> categoryEntityList = categoryService.listWithTree();
 
-        return R.ok().put("page", page);
+
+        return R.ok().put("data", categoryEntityList);
     }
 
 
@@ -51,7 +49,7 @@ public class CategoryController {
     public R info(@PathVariable("catId") Long catId){
 		CategoryEntity category = categoryService.getById(catId);
 
-        return R.ok().put("category", category);
+        return R.ok().put("data", category);
     }
 
     /**
@@ -62,6 +60,11 @@ public class CategoryController {
     public R save(@RequestBody CategoryEntity category){
 		categoryService.save(category);
 
+        return R.ok();
+    }
+    @RequestMapping("/update/sort")
+    public R updateSort(@RequestBody CategoryEntity[] category){
+        categoryService.updateBatchById(Arrays.asList(category));
         return R.ok();
     }
 
@@ -78,12 +81,17 @@ public class CategoryController {
 
     /**
      * 删除
+     * @RequestBody 获取请求体中的json数据，转换成对象
      */
-    @RequestMapping("/delete")
+    @RequestMapping(value = "/delete",method = RequestMethod.POST)
    // @RequiresPermissions("product:category:delete")
     public R delete(@RequestBody Long[] catIds){
-		categoryService.removeByIds(Arrays.asList(catIds));
-
+        // 物理删除
+        categoryService.removeMenuByIds(catIds);
+        /*
+        // 逻辑删除
+        categoryService.updateStatus(catIds, 0);
+         */
         return R.ok();
     }
 

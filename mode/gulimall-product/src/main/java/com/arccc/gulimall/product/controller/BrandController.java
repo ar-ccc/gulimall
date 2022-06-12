@@ -4,7 +4,11 @@ import java.util.Arrays;
 import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
+import com.arccc.common.validator.group.AddGroup;
+import com.arccc.common.validator.group.UpdateGroup;
+import com.arccc.common.validator.group.UpdateStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +19,6 @@ import com.arccc.gulimall.product.entity.BrandEntity;
 import com.arccc.gulimall.product.service.BrandService;
 import com.arccc.common.utils.PageUtils;
 import com.arccc.common.utils.R;
-
 
 
 /**
@@ -59,7 +62,7 @@ public class BrandController {
      */
     @RequestMapping("/save")
     //@RequiresPermissions("product:brand:save")
-    public R save(@RequestBody BrandEntity brand){
+    public R save(@Validated({AddGroup.class}) @RequestBody BrandEntity brand){
 		brandService.save(brand);
 
         return R.ok();
@@ -70,8 +73,19 @@ public class BrandController {
      */
     @RequestMapping("/update")
    // @RequiresPermissions("product:brand:update")
-    public R update(@RequestBody BrandEntity brand){
+    public R update(@Validated({UpdateGroup.class})
+                    @RequestBody
+                    BrandEntity brand){
 		brandService.updateById(brand);
+
+        return R.ok();
+    }
+    @RequestMapping("/update/status")
+    // @RequiresPermissions("product:brand:update")
+    public R updateStatus(@Validated({UpdateStatus.class})
+                    @RequestBody
+                    BrandEntity brand){
+        brandService.updateById(brand);
 
         return R.ok();
     }

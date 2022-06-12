@@ -22,10 +22,11 @@
         <module>mode/gulimall-order</module>
         <module>mode/gulimall-ware</module>
         <module>mode/gulimall-coupon</module>
-<!--        <module>mode/renren-fast</module>-->
+        <module>mode/renren-fast</module>
 <!--        <module>mode/renren-generator</module>-->
         <module>mode/gulimall-common</module>
         <module>mode/gulimall-gateway</module>
+        <module>mode/gulimall-third-party</module>
     </modules>
     <properties>
         <java.version>1.8</java.version>

@@ -8,13 +8,30 @@ spring:
   cloud:
     nacos:
       server-addr: 127.0.0.1:8848
+    alicloud:
+      access-key: LTAI5t6nkVSJEe4rMjMR6Rkz
+      secret-key: g6lyMYhSBFCPG5OBlJCrWCU7J1J13p
+      oss:
+        endpoint: oss-cn-hangzhou.aliyuncs.com
+
   application:
     name: gulimall-product-service
+
 mybatis-plus:
+  # mapper.xml配置文件地址
   mapper-locations: classpath*:/mapper/**/*.xml
+  # 配置全局属性
   global-config:
     db-config:
+      # id自增
       id-type: auto
+      # 逻辑删除,0:隐藏,1:显示
+      logic-delete-value: 1
+      logic-not-delete-value: 0
 
 server:
   port: 10001
+
+logging:
+  level:
+    com.arccc.gulimall: DEBUG
