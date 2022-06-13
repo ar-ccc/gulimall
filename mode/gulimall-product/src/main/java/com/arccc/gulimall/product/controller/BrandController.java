@@ -76,7 +76,8 @@ public class BrandController {
     public R update(@Validated({UpdateGroup.class})
                     @RequestBody
                     BrandEntity brand){
-		brandService.updateById(brand);
+        brandService.updateDetail(brand);
+//		brandService.updateById(brand);
 
         return R.ok();
     }
@@ -85,6 +86,7 @@ public class BrandController {
     public R updateStatus(@Validated({UpdateStatus.class})
                     @RequestBody
                     BrandEntity brand){
+
         brandService.updateById(brand);
 
         return R.ok();

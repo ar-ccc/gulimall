@@ -1,5 +1,6 @@
 package com.arccc.gulimall.product.service;
 
+import com.arccc.gulimall.product.vo.AttrGroupRelationVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.arccc.common.utils.PageUtils;
 import com.arccc.gulimall.product.entity.AttrAttrgroupRelationEntity;
@@ -16,5 +17,7 @@ import java.util.Map;
 public interface AttrAttrgroupRelationService extends IService<AttrAttrgroupRelationEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    void saveBatch(AttrGroupRelationVo[] vos);
 }
 

@@ -1,5 +1,9 @@
 package com.arccc.gulimall.product.service.impl;
 
+import com.arccc.gulimall.product.dao.CategoryBrandRelationDao;
+import com.arccc.gulimall.product.entity.CategoryBrandRelationEntity;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -14,11 +18,14 @@ import com.arccc.common.utils.Query;
 import com.arccc.gulimall.product.dao.CategoryDao;
 import com.arccc.gulimall.product.entity.CategoryEntity;
 import com.arccc.gulimall.product.service.CategoryService;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service("categoryService")
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
 
+    @Autowired
+    CategoryBrandRelationDao categoryBrandRelationDao;
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<CategoryEntity> page = this.page(
@@ -43,7 +50,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
                 .filter(categoryEntity -> categoryEntity.getParentCid() == 0)
                 .map(categoryEntity -> {
                     //把一级分类的子分类放到一级分类下
-                    categoryEntity.setChildCatList(getChildren(categoryEntity,categoryEntities));
+                    categoryEntity.setChildren(getChildren(categoryEntity,categoryEntities));
                     return categoryEntity;
                 })
                 //按照sort排序，小的在前，大的在后
@@ -71,6 +78,19 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         findParentPath(catelogId,path);
         return path.toArray(new Long[path.size()]);
     }
+
+    @Transactional
+    @Override
+    public void updateDetail(CategoryEntity category) {
+        baseMapper.updateById(category);
+        if (StringUtils.isNotEmpty(category.getName())){
+            CategoryBrandRelationEntity entity = new CategoryBrandRelationEntity();
+            entity.setCatelogName(category.getName());
+            categoryBrandRelationDao.update(entity,new QueryWrapper<CategoryBrandRelationEntity>().eq("catelog_id",category.getCatId()));
+        }
+
+    }
+
     private List<Long> findParentPath(Long catelogId , List<Long> path){
         CategoryEntity categoryEntity = baseMapper.selectById(catelogId);
         if (categoryEntity.getParentCid() != 0){
@@ -85,7 +105,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         List<CategoryEntity> childCatList = all.stream()
                 .filter(categoryEntity1 -> categoryEntity1.getParentCid().equals(categoryEntity.getCatId()))
                 .map(categoryEntity1 -> {
-                    categoryEntity1.setChildCatList(getChildren(categoryEntity1,all));
+                    categoryEntity1.setChildren(getChildren(categoryEntity1,all));
                     return categoryEntity1;
                 })
                 .sorted(Comparator.comparing(CategoryEntity::getSort))
