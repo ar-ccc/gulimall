@@ -1,22 +1,21 @@
 package com.arccc.gulimall.product.controller;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-//import org.apache.shiro.authz.annotation.RequiresPermissions;
+import com.arccc.common.utils.PageUtils;
+import com.arccc.common.utils.R;
 import com.arccc.gulimall.product.entity.AttrEntity;
+import com.arccc.gulimall.product.entity.AttrGroupEntity;
 import com.arccc.gulimall.product.service.AttrAttrgroupRelationService;
+import com.arccc.gulimall.product.service.AttrGroupService;
 import com.arccc.gulimall.product.service.AttrService;
 import com.arccc.gulimall.product.service.CategoryService;
 import com.arccc.gulimall.product.vo.AttrGroupRelationVo;
+import com.arccc.gulimall.product.vo.AttrGroupWithAttrsVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import com.arccc.gulimall.product.entity.AttrGroupEntity;
-import com.arccc.gulimall.product.service.AttrGroupService;
-import com.arccc.common.utils.PageUtils;
-import com.arccc.common.utils.R;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 
 
@@ -39,12 +38,24 @@ public class AttrGroupController {
 
     @Autowired
     private CategoryService categoryService;
+
+    /**
+     * /product/attrgroup/{catelogId}/withattr
+     * 获取当前分类下的所有属性分组和所有属性
+     */
+    @GetMapping("/{catelogId}/withattr")
+    public R getWithattr(@PathVariable("catelogId")Long catelogId){
+        List<AttrGroupWithAttrsVo> list =  attrGroupService.getAttrGroupWithAttrsByCatelogId(catelogId);
+        return R.ok().put("data",list);
+    }
+
     //product/attrgroup/1/attr/relation 获取当前分组关联的所有属性
     @GetMapping("/{id}/attr/relation")
     public R attrRelation(@PathVariable("id")Long id){
         List<AttrEntity> list = attrService.getRelation(id);
         return R.ok().put("data", list);
     }
+
     /**
      * /product/attrgroup/{attrgroupId}/noattr/relation
      * 获取当前分类下没有被关联的属性

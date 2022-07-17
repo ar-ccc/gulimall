@@ -1,23 +1,25 @@
 package com.arccc.gulimall.member.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-//import org.apache.shiro.authz.annotation.RequiresPermissions;
-import com.arccc.gulimall.member.feign.CoupenFeignService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.arccc.gulimall.member.entity.MemberEntity;
-import com.arccc.gulimall.member.service.MemberService;
+import com.arccc.common.constant.MemberConstant;
+import com.arccc.common.error.BizCodeEnume;
 import com.arccc.common.utils.PageUtils;
 import com.arccc.common.utils.R;
+import com.arccc.common.vo.MemberRespVo;
+import com.arccc.gulimall.member.entity.MemberEntity;
+import com.arccc.gulimall.member.exception.PhoneExistsException;
+import com.arccc.gulimall.member.exception.UserNameExistsException;
+import com.arccc.gulimall.member.feign.CoupenFeignService;
+import com.arccc.gulimall.member.service.MemberService;
+import com.arccc.gulimall.member.vo.MemberLoginVo;
+import com.arccc.gulimall.member.vo.MemberRegistryVo;
+import com.arccc.gulimall.member.vo.SociaUser;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
+import java.util.Map;
 
 
 /**
@@ -52,6 +54,55 @@ public class MemberController {
                      .put("coupons", coupons);
 
     }
+
+    /**
+     * 用户注册
+     * @param vo
+     * @return
+     */
+    @PostMapping("/registry")
+    public R registry(@RequestBody MemberRegistryVo vo){
+        try {
+            memberService.registry(vo);
+        }catch (PhoneExistsException e){
+            return R.error(BizCodeEnume.PHONE_EXCEPTION);
+        }catch (UserNameExistsException e){
+            return R.error(BizCodeEnume.USER_EXCEPTION);
+        }
+
+        return R.ok();
+    }
+
+    /**
+     * 用户登录
+     * @param vo
+     * @return
+     */
+    @PostMapping("/login")
+    public R login(@RequestBody MemberLoginVo vo){
+        MemberEntity m  = memberService.login(vo);
+        if (m==null){
+            return R.error(BizCodeEnume.USERNAME_OR_PASSWORD_EXCEPTION);
+        }
+        // TODO 登录成功处理
+        MemberRespVo memberRespVo = new MemberRespVo();
+        BeanUtils.copyProperties(m,memberRespVo);
+
+        return R.ok().putDataObjectToJson(memberRespVo);
+    }
+
+    @PostMapping("/oauth/login")
+    public R oauthLogin(@RequestBody SociaUser sociaUser, @RequestParam("type") MemberConstant.OauthLoginType type) throws Exception {
+        MemberEntity m  = memberService.login(sociaUser,type);
+        if (m==null){
+            return R.error(BizCodeEnume.USERNAME_OR_PASSWORD_EXCEPTION);
+        }
+        // TODO 登录成功处理
+        MemberRespVo memberRespVo = new MemberRespVo();
+        BeanUtils.copyProperties(m,memberRespVo);
+        return R.ok().putDataObjectToJson(memberRespVo);
+    }
+
 
     /**
      * 列表

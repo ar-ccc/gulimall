@@ -6,17 +6,32 @@ spring:
       server-addr: 127.0.0.1:8848
     gateway:
       routes:
+
         - id: oos_route
           uri: lb://gulimall-third-party
           predicates:
             - Path=/api/thirdparty/**
           filters:
             - RewritePath=/api/thirdparty/(?<segment>.*),/$\{segment}
+           #会员系统
+        - id: member_route
+          uri: lb://gulimall-member-service
+          predicates:
+            - Path=/api/member/**
+          filters:
+            - RewritePath=/api/(?<segment>.*),/$\{segment}
+          #库存系统
+        - id: ware_route
+          uri: lb://gulimall-ware-service
+          predicates:
+            - Path=/api/ware/**
+          filters:
+            - RewritePath=/api/(?<segment>.*),/$\{segment}
 
         - id: product_route
           uri: lb://gulimall-product-service
           predicates:
-            - Path=/api/product/**
+            - Path=/api/product/**,/hello
           filters:
             - RewritePath=/api/(?<segment>.*),/$\{segment}
         - id: admin_route
@@ -26,6 +41,27 @@ spring:
           filters:
             - RewritePath=/api/(?<segment>.*),/renren-fast/$\{segment}
 
+        - id: gulimall_host_route
+          uri: lb://gulimall-product-service
+          predicates:
+            - Host=gulimall.com,item.gulimall.com
 
+        - id: gulimall_search_route
+          uri: lb://gulimall-search-server
+          predicates:
+            - Host=search.gulimall.com
+        - id: gulimall_auth_route
+          uri: lb://gulimall-auth-server
+          predicates:
+            - Host=auth.gulimall.com
+        - id: gulimall-cart-route
+          uri: lb://gulimall-cart
+          predicates:
+            - Host=cart.gulimall.com
+
+        - id: gulimall-order-route
+          uri: lb://gulimall-order-service
+          predicates:
+            - Host=order.gulimall.com
   application:
     name: gulimall-gateway

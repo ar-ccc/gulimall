@@ -1,21 +1,24 @@
 package com.arccc.gulimall.product.service.impl;
 
+import com.arccc.common.utils.PageUtils;
+import com.arccc.common.utils.Query;
 import com.arccc.gulimall.product.dao.BrandDao;
+import com.arccc.gulimall.product.dao.CategoryBrandRelationDao;
 import com.arccc.gulimall.product.dao.CategoryDao;
 import com.arccc.gulimall.product.entity.BrandEntity;
+import com.arccc.gulimall.product.entity.CategoryBrandRelationEntity;
 import com.arccc.gulimall.product.entity.CategoryEntity;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import java.util.Map;
+import com.arccc.gulimall.product.service.BrandService;
+import com.arccc.gulimall.product.service.CategoryBrandRelationService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.arccc.common.utils.PageUtils;
-import com.arccc.common.utils.Query;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import com.arccc.gulimall.product.dao.CategoryBrandRelationDao;
-import com.arccc.gulimall.product.entity.CategoryBrandRelationEntity;
-import com.arccc.gulimall.product.service.CategoryBrandRelationService;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Service("categoryBrandRelationService")
@@ -24,6 +27,8 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
     BrandDao brandDao;
     @Autowired
     CategoryDao categoryDao;
+    @Autowired
+    BrandService brandService;
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<CategoryBrandRelationEntity> page = this.page(
@@ -43,6 +48,14 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
         categoryBrandRelation.setBrandName(brandEntity.getName());
         categoryBrandRelation.setCatelogName(categoryEntity.getName());
         this.save(categoryBrandRelation);
+    }
+
+    @Override
+    public List<BrandEntity> getBrandsByCatId(Long catId) {
+        List<CategoryBrandRelationEntity> list = baseMapper.selectList(new QueryWrapper<CategoryBrandRelationEntity>().eq("catelog_id", catId));
+        List<Long> collect = list.stream().map(CategoryBrandRelationEntity::getBrandId).collect(Collectors.toList());
+
+        return (List<BrandEntity>) brandService.listByIds(collect);
     }
 
 }

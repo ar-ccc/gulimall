@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "alipay.app_id",
+      "type": "java.lang.String",
+      "description": "支付宝appID."
+    }
+  ]
+}

@@ -1,9 +1,11 @@
 package com.arccc.gulimall.product.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.arccc.common.utils.PageUtils;
+import com.arccc.gulimall.product.entity.BrandEntity;
 import com.arccc.gulimall.product.entity.CategoryBrandRelationEntity;
+import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,5 +20,7 @@ public interface CategoryBrandRelationService extends IService<CategoryBrandRela
     PageUtils queryPage(Map<String, Object> params);
 
     void saveDetail(CategoryBrandRelationEntity categoryBrandRelation);
+
+    List<BrandEntity> getBrandsByCatId(Long catId);
 }
 

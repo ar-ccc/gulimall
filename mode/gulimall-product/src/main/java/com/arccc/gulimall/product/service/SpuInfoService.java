@@ -1,8 +1,9 @@
 package com.arccc.gulimall.product.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.arccc.common.utils.PageUtils;
 import com.arccc.gulimall.product.entity.SpuInfoEntity;
+import com.arccc.gulimall.product.vo.SpuSaveVo;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.Map;
 
@@ -16,5 +17,15 @@ import java.util.Map;
 public interface SpuInfoService extends IService<SpuInfoEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    void saveSpuInfo(SpuSaveVo spuInfo);
+
+
+    Long SaveSpuInfo(SpuSaveVo vo);
+
+    PageUtils queryPageByCondition(Map<String, Object> params);
+
+    void up(Long spuId);
+
 }
 

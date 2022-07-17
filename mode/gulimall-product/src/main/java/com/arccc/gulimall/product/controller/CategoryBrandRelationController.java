@@ -1,18 +1,19 @@
 package com.arccc.gulimall.product.controller;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-//import org.apache.shiro.authz.annotation.RequiresPermissions;
+import com.arccc.common.utils.PageUtils;
+import com.arccc.common.utils.R;
+import com.arccc.gulimall.product.entity.BrandEntity;
+import com.arccc.gulimall.product.entity.CategoryBrandRelationEntity;
+import com.arccc.gulimall.product.service.CategoryBrandRelationService;
+import com.arccc.gulimall.product.vo.BrandResponseVo;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import com.arccc.gulimall.product.entity.CategoryBrandRelationEntity;
-import com.arccc.gulimall.product.service.CategoryBrandRelationService;
-import com.arccc.common.utils.PageUtils;
-import com.arccc.common.utils.R;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 
@@ -28,6 +29,23 @@ import com.arccc.common.utils.R;
 public class CategoryBrandRelationController {
     @Autowired
     private CategoryBrandRelationService categoryBrandRelationService;
+
+    /**
+     * /product/categorybrandrelation/brands/list
+     * 获取分类关联的品牌id 和品牌name
+     */
+    @GetMapping("/brands/list")
+    public R getBrandByCatId(@RequestParam("catId") Long catId){
+        List<BrandEntity> list = categoryBrandRelationService.getBrandsByCatId(catId);
+        List<BrandResponseVo> vos =
+                list.stream().map(item -> {
+                    BrandResponseVo brandResponseVo = new BrandResponseVo();
+                    brandResponseVo.setBrandId(item.getBrandId());
+                    brandResponseVo.setBrandName(item.getName());
+                    return brandResponseVo;
+                }).collect(Collectors.toList());
+        return R.ok().put("data",vos);
+    }
 
     /**
      * 列表

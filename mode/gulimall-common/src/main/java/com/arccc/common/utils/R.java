@@ -8,6 +8,9 @@
 
 package com.arccc.common.utils;
 
+import com.alibaba.nacos.common.utils.JacksonUtils;
+import com.arccc.common.error.BizCodeEnume;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.http.HttpStatus;
 
 import java.util.HashMap;
@@ -33,6 +36,42 @@ public class R extends HashMap<String, Object> {
 	public static R error(String msg) {
 		return error(HttpStatus.SC_INTERNAL_SERVER_ERROR, msg);
 	}
+	public static R error(BizCodeEnume bizCodeEnume){
+		return error(bizCodeEnume.getCode(),bizCodeEnume.getMsg());
+	}
+	public Integer getCode(){
+		return (Integer) this.get("code");
+	}
+	public String getMeesage(){
+		return (String) this.get("msg");
+	}
+	public <T> T getDataObjectByTypeJson(TypeReference<T> typeReference){
+		Object data = get("data");
+		if (data instanceof String){
+			return JacksonUtils.toObj((String) data, typeReference);
+		}else {
+			String s = JacksonUtils.toJson(data);
+			return JacksonUtils.toObj(s,typeReference);
+		}
+	}
+	public <T> T getDataObjectByTypeJson(String  string,TypeReference<T> typeReference){
+
+		Object o = get(string);
+		if (o instanceof String){
+			String data = (String) o;
+			return JacksonUtils.toObj(data, typeReference);
+		}else {
+			String s = JacksonUtils.toJson(o);
+			return JacksonUtils.toObj(s,typeReference);
+		}
+
+	}
+
+	public R putDataObjectToJson(Object object){
+		put("data",JacksonUtils.toJson(object));
+		return this;
+	}
+
 	
 	public static R error(int code, String msg) {
 		R r = new R();

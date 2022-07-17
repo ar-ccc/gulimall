@@ -1,20 +1,19 @@
 package com.arccc.gulimall.product.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-//import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.arccc.gulimall.product.entity.SkuInfoEntity;
-import com.arccc.gulimall.product.service.SkuInfoService;
 import com.arccc.common.utils.PageUtils;
 import com.arccc.common.utils.R;
+import com.arccc.common.vo.OrderItemProductRespVo;
+import com.arccc.gulimall.product.entity.SkuInfoEntity;
+import com.arccc.gulimall.product.service.SkuInfoService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 
@@ -32,12 +31,29 @@ public class SkuInfoController {
     private SkuInfoService skuInfoService;
 
     /**
+     * 查询所有订单需要的数据并封装返回
+     * @param skuIds
+     * @return
+     */
+    @PostMapping("/orderListItems")
+    public R getOrderItemBySkuIds(@RequestBody List<Long> skuIds){
+        List<OrderItemProductRespVo> orderItemProductRespVo = skuInfoService.getOrderItemBySkuIds(skuIds);
+        return R.ok().putDataObjectToJson(orderItemProductRespVo);
+    }
+    @PostMapping("/getPrices")
+    @ResponseBody
+    public Map<Long,BigDecimal> getPrice(@RequestBody List<Long> skuIds){
+        Collection<SkuInfoEntity> listByIds = skuInfoService.listByIds(skuIds);
+        return listByIds.stream().collect(Collectors.toMap(SkuInfoEntity::getSkuId, SkuInfoEntity::getPrice));
+    }
+
+    /**
      * 列表
      */
     @RequestMapping("/list")
     //@RequiresPermissions("product:skuinfo:list")
     public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = skuInfoService.queryPage(params);
+        PageUtils page = skuInfoService.queryPageByCondition(params);
 
         return R.ok().put("page", page);
     }
@@ -47,11 +63,10 @@ public class SkuInfoController {
      * 信息
      */
     @RequestMapping("/info/{skuId}")
-    //@RequiresPermissions("product:skuinfo:info")
     public R info(@PathVariable("skuId") Long skuId){
 		SkuInfoEntity skuInfo = skuInfoService.getById(skuId);
 
-        return R.ok().put("skuInfo", skuInfo);
+        return R.ok().put("skuInfo", skuInfo).putDataObjectToJson(skuInfo);
     }
 
     /**
@@ -63,6 +78,14 @@ public class SkuInfoController {
 		skuInfoService.save(skuInfo);
 
         return R.ok();
+    }
+
+    @GetMapping("/getSkuByCatelogIdAndKeyword")
+    @ResponseBody
+    public List<SkuInfoEntity> getSkuByCatelogIdAndKeyword(@RequestParam(value = "catelog3Id",required = false) Long catelog3Id,@RequestParam(value = "keyword",required = false) String keyword ){
+
+        return skuInfoService.getSkuByCatelogIdAndKeyword(catelog3Id,keyword);
+
     }
 
     /**

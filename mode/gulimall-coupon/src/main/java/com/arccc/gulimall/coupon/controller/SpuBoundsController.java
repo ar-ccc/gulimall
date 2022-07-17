@@ -1,20 +1,16 @@
 package com.arccc.gulimall.coupon.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-//import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.arccc.gulimall.coupon.entity.SpuBoundsEntity;
-import com.arccc.gulimall.coupon.service.SpuBoundsService;
 import com.arccc.common.utils.PageUtils;
 import com.arccc.common.utils.R;
+import com.arccc.gulimall.coupon.entity.SpuBoundsEntity;
+import com.arccc.gulimall.coupon.service.SpuBoundsService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 
 
@@ -30,6 +26,17 @@ import com.arccc.common.utils.R;
 public class SpuBoundsController {
     @Autowired
     private SpuBoundsService spuBoundsService;
+
+    /**
+     * 提供spuid查询所有spu的积分和成长值
+     * @param spuIds
+     * @return
+     */
+    @GetMapping("/listByIds")
+    public R listByIds(@RequestParam("spuIds")List<Long> spuIds){
+        List<SpuBoundsEntity> list = spuBoundsService.list(new QueryWrapper<SpuBoundsEntity>().in("spu_id", spuIds));
+        return R.ok().putDataObjectToJson(list);
+    }
 
     /**
      * 列表
@@ -57,7 +64,7 @@ public class SpuBoundsController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @PostMapping("/save")
     //@RequiresPermissions("coupon:spubounds:save")
     public R save(@RequestBody SpuBoundsEntity spuBounds){
 		spuBoundsService.save(spuBounds);

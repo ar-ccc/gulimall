@@ -13,5 +13,41 @@
         <result property="attrSort" column="attr_sort"/>
     </resultMap>
 
+    <resultMap id="skuItemSaleAttrVo" type="com.arccc.gulimall.product.vo.SkuItemSaleAttrVo">
+        <result  property="attrId" column="attr_id"/>
+        <result property="attrName" column="attr_name"/>
+        <collection property="attrValues" ofType="com.arccc.gulimall.product.vo.AttrValueWithSkuIdVo">
+            <result property="attrValue" column="attr_values"/>
+            <result property="skuIds" column="sku_ids"/>
+        </collection>
+    </resultMap>
+
+    <select id="getSaleAttrsBySpuId" resultMap="skuItemSaleAttrVo">
+        SELECT  pssav.`attr_id` attr_id,
+                pssav.`attr_name` attr_name,
+                pssav.`attr_value` attr_values,
+                GROUP_CONCAT(DISTINCT psi.`sku_id`) sku_ids
+        FROM `pms_sku_info` psi
+                 LEFT JOIN `pms_sku_sale_attr_value` pssav
+                           ON psi.`sku_id`=pssav.`sku_id`
+        WHERE psi.`spu_id`=#{spuId}
+        GROUP BY pssav.`attr_id`,attr_id,pssav.`attr_name`,pssav.`attr_value`
+    </select>
+    <select id="getSaleBySkuId" resultType="java.lang.String">
+        SELECT CONCAT(attr_name,'：',attr_value)
+        FROM `pms_sku_sale_attr_value`
+        WHERE sku_id=#{id}
+    </select>
+    <select id="getSkuIdAndSkuSaleAttrJson" resultType="java.lang.String">
+        SELECT  CONCAT(sku_id,'_', '{',GROUP_CONCAT(attr_name,':',attr_value),'}')
+        FROM `pms_sku_sale_attr_value`
+        WHERE sku_id
+        IN
+        <foreach collection="skuIds" item="skuid" separator="," open="(" close=")">
+        #{skuid}
+        </foreach>
+        GROUP BY sku_id
+    </select>
+
 
 </mapper>

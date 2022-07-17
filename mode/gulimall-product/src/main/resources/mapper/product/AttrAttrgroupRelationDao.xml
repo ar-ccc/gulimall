@@ -16,7 +16,6 @@
          <foreach collection="entitys" item="item" separator=" OR ">
              (`attr_id`=#{item.attrId} AND `attr_group_id`=#{item.attrGroupId})
          </foreach>
-
     </delete>
 
 

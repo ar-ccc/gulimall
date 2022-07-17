@@ -1,9 +1,10 @@
 package com.arccc.gulimall.product.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.arccc.common.utils.PageUtils;
 import com.arccc.gulimall.product.entity.ProductAttrValueEntity;
+import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,5 +17,9 @@ import java.util.Map;
 public interface ProductAttrValueService extends IService<ProductAttrValueEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    List<ProductAttrValueEntity> listforspu(Long spuId);
+
+    void updateSpuAttr(Long spuId, List<ProductAttrValueEntity> attrs);
 }
 

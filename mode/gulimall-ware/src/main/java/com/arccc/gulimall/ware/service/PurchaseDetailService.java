@@ -1,9 +1,10 @@
 package com.arccc.gulimall.ware.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.arccc.common.utils.PageUtils;
 import com.arccc.gulimall.ware.entity.PurchaseDetailEntity;
+import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,5 +17,7 @@ import java.util.Map;
 public interface PurchaseDetailService extends IService<PurchaseDetailEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    List<PurchaseDetailEntity> getByPurchaseId(Long id);
 }
 

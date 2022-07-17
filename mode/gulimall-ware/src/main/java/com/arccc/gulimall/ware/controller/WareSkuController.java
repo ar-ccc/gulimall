@@ -1,20 +1,16 @@
 package com.arccc.gulimall.ware.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-//import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.arccc.gulimall.ware.entity.WareSkuEntity;
-import com.arccc.gulimall.ware.service.WareSkuService;
 import com.arccc.common.utils.PageUtils;
 import com.arccc.common.utils.R;
+import com.arccc.gulimall.ware.entity.WareSkuEntity;
+import com.arccc.gulimall.ware.service.WareSkuService;
+import com.arccc.gulimall.ware.vo.WareSkuLockVo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 
 
@@ -30,6 +26,26 @@ import com.arccc.common.utils.R;
 public class WareSkuController {
     @Autowired
     private WareSkuService wareSkuService;
+
+    @PostMapping("/lock")
+    public R orderLockStock(@RequestBody WareSkuLockVo vo){
+        try {
+            Boolean lockStockResult = wareSkuService.lock(vo);
+            return R.ok().putDataObjectToJson(lockStockResult);
+        }catch (RuntimeException e){
+            return R.error().put("data",e.getMessage());
+        }
+    }
+
+    /**
+     * 检查Sku是否有库存
+     */
+    @PostMapping("/hasStock")
+    @ResponseBody
+    public Map<Long, Boolean> getHasStock(@RequestBody List<Long> skuIds){
+
+        return wareSkuService.hasStocks(skuIds);
+    }
 
     /**
      * 列表

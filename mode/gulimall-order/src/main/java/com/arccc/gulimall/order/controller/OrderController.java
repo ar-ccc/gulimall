@@ -1,20 +1,15 @@
 package com.arccc.gulimall.order.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-//import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.arccc.gulimall.order.entity.OrderEntity;
-import com.arccc.gulimall.order.service.OrderService;
 import com.arccc.common.utils.PageUtils;
 import com.arccc.common.utils.R;
+import com.arccc.gulimall.order.entity.OrderEntity;
+import com.arccc.gulimall.order.service.OrderService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.Map;
 
 
 
@@ -28,8 +23,18 @@ import com.arccc.common.utils.R;
 @RestController
 @RequestMapping("order/order")
 public class OrderController {
+
     @Autowired
     private OrderService orderService;
+
+    /**
+     * 返回订单状态
+     */
+    @GetMapping("/orderStatus/{orderSn}")
+    public R getOrderStatus(@PathVariable String orderSn){
+        OrderEntity orderEntity = orderService.getOrderByOrderSn(orderSn);
+        return R.ok().putDataObjectToJson(orderEntity);
+    }
 
     /**
      * 列表
@@ -40,6 +45,18 @@ public class OrderController {
         PageUtils page = orderService.queryPage(params);
 
         return R.ok().put("page", page);
+    }
+
+    /**
+     * 查询登录用户的订单信息
+     * @param params 分页查询
+     * @return
+     */
+    @RequestMapping("/myOrderList")
+    public String listByUser(@RequestParam Map<String, Object> params, Model model){
+        PageUtils page = orderService.getOrderListByUserId(params);
+        model.addAttribute("orders",page);
+        return "forward:pay";
     }
 
 

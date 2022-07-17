@@ -1,23 +1,19 @@
 package com.arccc.gulimall.product.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-//import org.apache.shiro.authz.annotation.RequiresPermissions;
+import com.arccc.common.utils.PageUtils;
+import com.arccc.common.utils.R;
+import com.arccc.gulimall.product.entity.ProductAttrValueEntity;
+import com.arccc.gulimall.product.service.AttrService;
+import com.arccc.gulimall.product.service.ProductAttrValueService;
 import com.arccc.gulimall.product.vo.AttrResponseVo;
 import com.arccc.gulimall.product.vo.AttrVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.arccc.gulimall.product.entity.AttrEntity;
-import com.arccc.gulimall.product.service.AttrService;
-import com.arccc.common.utils.PageUtils;
-import com.arccc.common.utils.R;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 
 
@@ -35,6 +31,17 @@ public class AttrController {
     @Autowired
     private AttrService attrService;
 
+    @Autowired
+    ProductAttrValueService productAttrValueService;
+
+    /**
+     * /product/attr/base/listforspu/{spuId}
+     */
+    @GetMapping("/base/listforspu/{spuId}")
+    public R listforspu(@PathVariable("spuId")Long spuId ){
+        List<ProductAttrValueEntity> entity = productAttrValueService.listforspu(spuId);
+        return R.ok().put("data",entity);
+    }
     /**
      * 列表
      */
@@ -71,7 +78,14 @@ public class AttrController {
         attrService.saveAttr(attr);
         return R.ok();
     }
-
+    /**
+     * /product/attr/update/{spuId}
+     */
+    @PostMapping("/update/{spuId}")
+    public R updatespuId(@RequestBody List<ProductAttrValueEntity> attrs,@PathVariable("spuId")Long spuId){
+        productAttrValueService.updateSpuAttr(spuId,attrs);
+        return R.ok();
+    }
     /**
      * 修改
      */

@@ -10,3 +10,4 @@ spring:
         shared-configs[0].dataId: oss.yaml
         shared-configs[0].group: dev
         shared-configs[0].refresh-interval: 5000
+
