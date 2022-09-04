@@ -17,7 +17,7 @@ buildNumber.properties
 .mvn
 **/test/
 **/renren-generator/
-**/renren-fast/
+#**/renren-fast/
 **/views/**
 **/static/**
 **/db/**
